@@ -155,7 +155,7 @@ def search_venues():
 
   response={
     "count": query_results.count(),
-    "data": = data
+    "data": data
   }
   return render_template('pages/search_venues.html', results=response, search_term=search_term))
 
