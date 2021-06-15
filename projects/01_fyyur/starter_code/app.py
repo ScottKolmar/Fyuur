@@ -12,6 +12,7 @@ import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
+from flask_migrate import Migrate
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
@@ -28,6 +29,10 @@ migrate = Migrate(app, db)
 # Models.
 #----------------------------------------------------------------------------#
 
+shows = db.Table('Shows', 
+db.Column('venue_id', db.Integer, db.ForeignKey('Venue.id'), primary_key=True),
+db.Column('artist_id', db.Integer, db.ForeignKey('Artist.id'), primary_key=True))
+
 class Venue(db.Model):
     __tablename__ = 'Venue'
 
@@ -41,6 +46,12 @@ class Venue(db.Model):
     facebook_link = db.Column(db.String(120))
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
+    artists = db.relationship('Artist', secondary=shows, backref=db.backref('Venues', lazy=True))
+    genres = db.Column(db.String(120))
+    website = db.Column(db.String(120))
+    seeking_talent = db.Column(db.Boolean, nullable=False, default=False)
+    seeking_description = db.Column(db.String(120))
+
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -55,8 +66,10 @@ class Artist(db.Model):
     facebook_link = db.Column(db.String(120))
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
+    
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+
 
 #----------------------------------------------------------------------------#
 # Filters.
@@ -130,19 +143,20 @@ def search_venues():
 def show_venue(venue_id):
   # shows the venue page with the given venue_id
   # TODO: replace with real venue data from the venues table, using venue_id
+  venue = Venue.query.get(venue_id)
   data1={
-    "id": 1,
-    "name": "The Musical Hop",
-    "genres": ["Jazz", "Reggae", "Swing", "Classical", "Folk"],
-    "address": "1015 Folsom Street",
-    "city": "San Francisco",
-    "state": "CA",
-    "phone": "123-123-1234",
-    "website": "https://www.themusicalhop.com",
-    "facebook_link": "https://www.facebook.com/TheMusicalHop",
-    "seeking_talent": True,
-    "seeking_description": "We are on the lookout for a local artist to play every two weeks. Please call us.",
-    "image_link": "https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
+    "id": venue.id,
+    "name": venue.name,
+    "genres": venue.genres,
+    "address": venue.address,
+    "city": venue.city,
+    "state": venue.state,
+    "phone": venue.phone,
+    "website": venue.website,
+    "facebook_link": venue.facebook_link,
+    "seeking_talent": venue.seeking_talent,
+    "seeking_description": venue.seeking_description,
+    "image_link": venue.image_link,
     "past_shows": [{
       "artist_id": 4,
       "artist_name": "Guns N Petals",
