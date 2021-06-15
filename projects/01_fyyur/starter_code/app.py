@@ -147,6 +147,8 @@ def search_venues():
   search_term=request.form.get('search_term', '')
   query_results = Venue.query.filter(Venue.name.ilike('%{}%'.format(search_term)))
   data = []
+
+  # TODO: Fix shows to be upcoming shows actually
   for item in query_results:
     item_dict = {"id": item.id, "name": item.name, "num upcoming shows": item.shows}
     data.append(item_dict)
