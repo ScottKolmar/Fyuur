@@ -42,7 +42,7 @@ class Venue(db.Model):
     facebook_link = db.Column(db.String(120))
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
-    genres = db.Column("genres", db.Array(db.String(120)), nullable=False)
+    genres = db.Column("genres", db.ARRAY(db.String(120)), nullable=False)
     website = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String(120))
@@ -60,7 +60,7 @@ class Artist(db.Model):
     city = db.Column(db.String(120), nullable=False)
     state = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(120), nullable=False)
-    genres = db.Column("genres", db.Array(db.String(120)), nullable=False)
+    genres = db.Column("genres", db.ARRAY(db.String(120)), nullable=False)
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
 
