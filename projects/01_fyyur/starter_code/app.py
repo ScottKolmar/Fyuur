@@ -134,7 +134,7 @@ def venues():
   for location in locations:
 
     # Get all the venues unique to the location
-    location_venues = Venue.city.query.filter_by(city=city).order_by('id').all()
+    location_venues = Venue.query.filter_by(city=location[0]).order_by('id').all()
 
     # Generate a dictionary for each venue in the location, for display
     venue_dicts = []
@@ -146,7 +146,7 @@ def venues():
     data.append({
       "city": location[0],
       "state": location[1],
-      "venues": venue_dicts)
+      "venues": venue_dicts
     })
 
   return render_template('pages/venues.html', areas=data)
