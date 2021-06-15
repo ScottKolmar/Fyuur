@@ -116,28 +116,40 @@ def index():
 def venues():
   # TODO: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
-  data=[{
-    "city": "San Francisco",
-    "state": "CA",
-    "venues": [{
-      "id": 1,
-      "name": "The Musical Hop",
-      "num_upcoming_shows": 0,
-    }, {
-      "id": 3,
-      "name": "Park Square Live Music & Coffee",
-      "num_upcoming_shows": 1,
-    }]
-  }, {
-    "city": "New York",
-    "state": "NY",
-    "venues": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
-  }]
-  return render_template('pages/venues.html', areas=data);
+
+  # Instantiate empty data list
+  data = []
+
+  # Get all the venues in the table
+  venues = Venue.query.all()
+
+  # Instantiate empty location set so there are not duplicate locations
+  locations = set()
+
+  # Populate locations set
+  for venue in venues:
+    locations.add((venue.city, venue.state))
+
+  # Loop through each location
+  for location in locations:
+
+    # Get all the venues unique to the location
+    location_venues = Venue.city.query.filter_by(city=city).order_by('id').all()
+
+    # Generate a dictionary for each venue in the location, for display
+    venue_dicts = []
+    for venue in location_venues:
+      venue_dict = {"id": venue.id, "name": venue.name, "num upcoming shows": venue.shows}
+      venue_dicts.append(venue_dict)
+    
+    # Append the location data to the empty data list
+    data.append({
+      "city": location[0],
+      "state": location[1],
+      "venues": venue_dicts)
+    })
+
+  return render_template('pages/venues.html', areas=data)
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
