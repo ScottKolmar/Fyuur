@@ -29,11 +29,6 @@ migrate = Migrate(app, db)
 # Models.
 #----------------------------------------------------------------------------#
 
-shows = db.Table('Shows', 
-db.Column('venue_id', db.Integer, db.ForeignKey('Venue.id'), primary_key=True),
-db.Column('artist_id', db.Integer, db.ForeignKey('Artist.id'), primary_key=True))
-start_time = db.Column(db.DateTime)
-
 class Venue(db.Model):
     __tablename__ = 'Venue'
 
@@ -53,6 +48,9 @@ class Venue(db.Model):
     seeking_talent = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String(120))
 
+    def __repr__(self):
+      return f'<Venue ID: {self.id}, Name: {self.name}>'
+
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -70,10 +68,22 @@ class Artist(db.Model):
     website = db.Column(db.String(120))
     seeking_venue = db.Column(db.Boolean, nullable = False, default = False)
     seeking_description = db.Column(db.String(120))
+
+    def __repr__(self):
+      return f'<Artist ID: {self.id}, Name: {self.name}>'
     
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+class Show(db.Model):
+  __tablename__ = 'Show'
+ 
+  id = db.Column(db.Integer, primary_key = True)
+  venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'), nullable = False),
+  artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'), nullable = False)
+  start_time = db.Column(db.DateTime, nullable = False, default = datetime.utcnow)
 
+  def __repr__(self):
+      return f'<Venue ID: {self.id}, Name: {self.name}>'
 
 #----------------------------------------------------------------------------#
 # Filters.
