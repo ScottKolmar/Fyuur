@@ -139,7 +139,11 @@ def venues():
     # Generate a dictionary for each venue in the location, for display
     venue_dicts = []
     for venue in location_venues:
-      venue_dict = {"id": venue.id, "name": venue.name, "num upcoming shows": venue.shows}
+      upcoming_shows = 0
+      for show in venue.shows:
+        if show.start_time > datetime.now():
+          upcoming_shows += 1
+      venue_dict = {"id": venue.id, "name": venue.name, "num upcoming shows": upcoming_shows}
       venue_dicts.append(venue_dict)
     
     # Append the location data to the empty data list
