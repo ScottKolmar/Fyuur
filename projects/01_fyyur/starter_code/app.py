@@ -13,18 +13,8 @@ from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
 from flask_migrate import Migrate
-from models import Venue, Artist, Show
-#----------------------------------------------------------------------------#
-# App Config.
-#----------------------------------------------------------------------------#
+from models import *
 
-app = Flask(__name__)
-moment = Moment(app)
-app.config.from_object('config')
-db = SQLAlchemy(app)
-
-# Set up flask migrate
-migrate = Migrate(app, db)
 
 #----------------------------------------------------------------------------#
 # Filters.
@@ -80,7 +70,7 @@ def venues():
     for venue in location_venues:
       upcoming_shows = 0
       for show in venue.shows:
-        if show.start_time > datetime.now():
+        if show.start_time > datetime.datetime.now():
           upcoming_shows += 1
       venue_dict = {
         "id": venue.id,
@@ -109,9 +99,13 @@ def search_venues():
   for item in query_results:
     upcoming_shows = 0
     for show in item.shows:
-      if show.start_time > datetime.now():
+      if show.start_time > datetime.datetime.now():
         upcoming_shows += 1
-    item_dict = {"id": item.id, "name": item.name, "num upcoming shows": upcoming_shows}
+    item_dict = {
+      "id": item.id,
+      "name": item.name,
+      "num upcoming shows": upcoming_shows
+      }
     data.append(item_dict)
 
   response={
@@ -131,13 +125,13 @@ def show_venue(venue_id):
   for show in venue.shows:
     data = {
       "artist_id": show.artist_id,
-      "artist_name": show.artist_name,
+      "artist_name": Artist.query.get(show.artist_id).name,
       "artist_image_link": Artist.query.get(show.artist_id).image_link,
       "start_time": format_datetime(str(show.start_time))
     }
-    if show.start_time < datetime.now():
+    if show.start_time < datetime.datetime.now():
       past_shows.append(data)
-    elif show.start_time > datetime.now():
+    elif show.start_time > datetime.datetime.now():
       upcoming_shows.append(data)
 
   data={
@@ -155,8 +149,8 @@ def show_venue(venue_id):
     "image_link": venue.image_link,
     "past_shows": past_shows,
     "upcoming_shows": upcoming_shows,
-    "past_shows_count": past_shows.count(),
-    "upcoming_shows_count": upcoming_shows.count(),
+    "past_shows_count": len(past_shows),
+    "upcoming_shows_count": len(upcoming_shows),
   }
   
   return render_template('pages/show_venue.html', venue=data)
@@ -276,7 +270,7 @@ def search_artists():
   for item in query_results:
     upcoming_shows = 0
     for show in item.shows:
-      if show.start_time > datetime.now():
+      if show.start_time > datetime.datetime.now():
         upcoming_shows += 1
     item_dict = {
       "id": item.id,
@@ -305,13 +299,13 @@ def show_artist(artist_id):
   for show in artist.shows:
       show_data = {
         "artist_id": show.artist_id,
-        "artist_name": show.artist_name,
+        "artist_name": Artist.query.get(show.artist_id).name,
         "artist_image_link": Artist.query.get(show.artist_id).image_link,
         "start_time": format_datetime(str(show.start_time))
       }
-      if show.start_time < datetime.now():
+      if show.start_time < datetime.datetime.now():
         past_shows.append(show_data)
-      elif show.start_time > datetime.now():
+      elif show.start_time > datetime.datetime.now():
         upcoming_shows.append(show_data)
 
   data={
@@ -328,8 +322,8 @@ def show_artist(artist_id):
     "image_link": artist.image_link,
     "past_shows": past_shows,
     "upcoming_shows": upcoming_shows,
-    "past_shows_count": past_shows.count(),
-    "upcoming_shows_count": upcoming_shows.count()
+    "past_shows_count": len(past_shows),
+    "upcoming_shows_count": len(upcoming_shows)
   }
   
   return render_template('pages/show_artist.html', artist=data)
@@ -523,7 +517,7 @@ def shows():
       "venue_id": show.venue_id,
       "venue_name": Venue.query.get(show.venue_id).name,
       "artist_id": show.artist_id,
-      "artist_name": Artist.query.get(show.artist.id).name,
+      "artist_name": Artist.query.get(show.artist_id).name,
       "artist_image_link": Artist.query.get(show.artist_id).image_link,
       "start_time": format_datetime(str(show.start_time))
     }
