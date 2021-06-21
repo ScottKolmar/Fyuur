@@ -22,7 +22,7 @@ moment = Moment(app)
 app.config.from_object('config')
 db = SQLAlchemy(app)
 
-# TODO: connect to a local postgresql database
+# Set up flask migrate
 migrate = Migrate(app, db)
 
 #----------------------------------------------------------------------------#
@@ -40,8 +40,6 @@ class Venue(db.Model):
     phone = db.Column(db.String(120), nullable=False)
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
     genres = db.Column("genres", db.ARRAY(db.String(120)), nullable=False)
     website = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean, nullable=False, default=False)
@@ -63,8 +61,6 @@ class Artist(db.Model):
     genres = db.Column("genres", db.ARRAY(db.String(120)), nullable=False)
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
     website = db.Column(db.String(120))
     seeking_venue = db.Column(db.Boolean, nullable = False, default = False)
     seeking_description = db.Column(db.String(120))
@@ -74,7 +70,7 @@ class Artist(db.Model):
       return f'<Artist ID: {self.id}, Name: {self.name}>'
     
 
-# TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+# Show Model
 class Show(db.Model):
   __tablename__ = 'Show'
  
@@ -114,8 +110,7 @@ def index():
 
 @app.route('/venues')
 def venues():
-  # TODO: replace with real venues data.
-  #       num_shows should be aggregated based on number of upcoming shows per venue.
+
 
   # Instantiate empty data list
   data = []
@@ -161,9 +156,8 @@ def venues():
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
-  # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
-  # seach for Hop should return "The Musical Hop".
-  # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
+  # Searches venues, case insensitive
+  
   search_term=request.form.get('search_term', '')
   query_results = Venue.query.filter(Venue.name.ilike('%{}%'.format(search_term)))
   data = []
@@ -185,7 +179,7 @@ def search_venues():
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
   # shows the venue page with the given venue_id
-  # TODO: replace with real venue data from the venues table, using venue_id
+
   venue = Venue.query.get(venue_id)
   past_shows = []
   upcoming_shows = []
@@ -272,8 +266,9 @@ def create_venue_submission():
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):
-  # TODO: Complete this endpoint for taking a venue_id, and using
-  # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
+  # Deletes a venue record
+
+  # Get venue from database
   venue = Venue.query.get(venue_id)
 
   try:
@@ -306,7 +301,7 @@ def delete_venue(venue_id):
 #  ----------------------------------------------------------------
 @app.route('/artists')
 def artists():
-  # TODO: replace with real data returned from querying the database
+
 
   # Query database for artists
   artists = Artist.query.all()
@@ -416,12 +411,11 @@ def edit_artist(artist_id):
     "seeking_description": artist.seeking_description,
     "image_link": artist.image_link
   }
-  # TODO: populate form with fields from artist with ID <artist_id>
+
   return render_template('forms/edit_artist.html', form=form, artist=artist_data)
 
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
-  # TODO: take values from the form submitted, and update existing
   # artist record with ID <artist_id> using the new attributes
 
   try:
@@ -481,8 +475,8 @@ def edit_venue(venue_id):
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
-  # TODO: take values from the form submitted, and update existing
   # venue record with ID <venue_id> using the new attributes
+
 
   try:
     
@@ -531,8 +525,7 @@ def create_artist_form():
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
   # called upon submitting the new artist listing form
-  # TODO: insert form data as a new Venue record in the db, instead
-  # TODO: modify data to be the data object returned from db insertion
+  
 
   try:
     form = ArtistForm()
@@ -603,7 +596,6 @@ def create_shows():
 @app.route('/shows/create', methods=['POST'])
 def create_show_submission():
   # called to create new shows in the db, upon submitting new show listing form
-  # TODO: insert form data as a new Show record in the db, instead
 
   try:
 
