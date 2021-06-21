@@ -143,7 +143,11 @@ def venues():
       for show in venue.shows:
         if show.start_time > datetime.now():
           upcoming_shows += 1
-      venue_dict = {"id": venue.id, "name": venue.name, "num upcoming shows": upcoming_shows}
+      venue_dict = {
+        "id": venue.id,
+        "name": venue.name,
+        "num upcoming shows": upcoming_shows
+        }
       venue_dicts.append(venue_dict)
     
     # Append the location data to the empty data list
@@ -191,7 +195,7 @@ def show_venue(venue_id):
       "artist_id": show.artist_id,
       "artist_name": show.artist_name,
       "artist_image_link": Artist.query.get(show.artist_id).image_link,
-      "start_time": show.start_time
+      "start_time": format_datetime(str(show.start_time))
     }
     if show.start_time < datetime.now():
       past_shows.append(data)
@@ -364,7 +368,7 @@ def show_artist(artist_id):
         "artist_id": show.artist_id,
         "artist_name": show.artist_name,
         "artist_image_link": Artist.query.get(show.artist_id).image_link,
-        "start_time": show.start_time
+        "start_time": format_datetime(str(show.start_time))
       }
       if show.start_time < datetime.now():
         past_shows.append(show_data)
