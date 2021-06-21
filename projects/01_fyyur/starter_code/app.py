@@ -164,9 +164,12 @@ def search_venues():
   query_results = Venue.query.filter(Venue.name.ilike('%{}%'.format(search_term)))
   data = []
 
-  # TODO: Fix shows to be upcoming shows actually
   for item in query_results:
-    item_dict = {"id": item.id, "name": item.name, "num upcoming shows": item.shows}
+    upcoming_shows = 0
+    for show in item.shows:
+      if show.start_time > datetime.now():
+        upcoming_shows += 1
+    item_dict = {"id": item.id, "name": item.name, "num upcoming shows": upcoming_shows}
     data.append(item_dict)
 
   response={
