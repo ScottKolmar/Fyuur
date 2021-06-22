@@ -168,10 +168,9 @@ def create_venue_submission():
 
   try:
     form = VenueForm()
-    for character in form.phone.data.replace('-', ''):
-      if character not in ['0','1','2','3','4','5','6','7','8','9']:
-        flash('Phone number must be numeric!')
-        return render_template('forms/new_venue.html', form = form)
+    if not form.validate():
+      flash('Bad input.')
+      return render_template('forms/new_venue.html', form = form)
 
     venue = Venue(name = form.name.data,
     genres = form.genres.data,
@@ -472,11 +471,9 @@ def create_artist_submission():
   try:
     form = ArtistForm()
 
-    # Constrain phone number to have only numbers
-    for character in form.phone.data.replace('-', ''):
-      if character not in ['0','1','2','3','4','5','6','7','8','9']:
-        flash('Phone number must be numeric!')
-        return render_template('forms/new_artist.html', form = form)
+    if not form.validate():
+      flash('Bad input.')
+      return render_template('forms/new_artist.html', form = form)
 
     artist = Artist(name = form.name.data,
     genres = form.genres.data,
