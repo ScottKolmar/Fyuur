@@ -168,6 +168,10 @@ def create_venue_submission():
 
   try:
     form = VenueForm()
+    if type(form.phone.data) != int:
+      flash('Phone number must be numeric!')
+      return render_template('forms/new_venue.html', form = form)
+
     venue = Venue(name = form.name.data,
     genres = form.genres.data,
     address = form.address.data,
