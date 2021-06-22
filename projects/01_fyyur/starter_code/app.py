@@ -272,15 +272,13 @@ def search_artists():
 
   # Loop through results and append data dictionaries to empty list
   data = []
-  for item in query_results:
-    upcoming_shows = 0
-    for show in item.shows:
-      if show.start_time > datetime.datetime.now():
-        upcoming_shows += 1
+  for artist in query_results:
+    shows = Show.query.filter_by(artist_id = artist.id)
+    num_upcoming_shows = (shows.filter(Show.start_time > datetime.datetime.now())).count()
     item_dict = {
       "id": item.id,
       "name": item.name,
-      "num upcoming shows": upcoming_shows
+      "num upcoming shows": num_upcoming_shows
       }
     data.append(item_dict)
 
@@ -299,9 +297,10 @@ def show_artist(artist_id):
   artist = Artist.query.get(artist_id)
 
   # Loop through shows to get past and upcoming shows
+  shows = Show.query.filter_by(artist_id = artist.id).all()
   past_shows = []
   upcoming_shows = []
-  for show in artist.shows:
+  for show in shows:
       show_data = {
         "artist_id": show.artist_id,
         "artist_name": Artist.query.get(show.artist_id).name,
