@@ -100,8 +100,8 @@ def search_venues():
     shows = Show.query.filter_by(venue_id = venue.id)
     num_upcoming_shows = (shows.filter(Show.start_time > datetime.datetime.now())).all()
     item_dict = {
-      "id": item.id,
-      "name": item.name,
+      "id": venue.id,
+      "name": venue.name,
       "num upcoming shows": num_upcoming_shows
       }
     data.append(item_dict)
@@ -276,8 +276,8 @@ def search_artists():
     shows = Show.query.filter_by(artist_id = artist.id)
     num_upcoming_shows = (shows.filter(Show.start_time > datetime.datetime.now())).count()
     item_dict = {
-      "id": item.id,
-      "name": item.name,
+      "id": artist.id,
+      "name": artist.name,
       "num upcoming shows": num_upcoming_shows
       }
     data.append(item_dict)
