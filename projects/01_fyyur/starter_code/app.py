@@ -280,7 +280,7 @@ def search_artists():
     data.append(item_dict)
 
   response={
-    "count": query_results.count(),
+    "count": len(query_results),
     "data": data
   }
 
