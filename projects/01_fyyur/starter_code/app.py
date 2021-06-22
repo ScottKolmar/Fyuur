@@ -96,15 +96,13 @@ def search_venues():
   query_results = Venue.query.filter(Venue.name.ilike('%{}%'.format(search_term)))
   data = []
 
-  for item in query_results:
-    upcoming_shows = 0
-    for show in item.shows:
-      if show.start_time > datetime.datetime.now():
-        upcoming_shows += 1
+  for venue in query_results:
+    shows = Show.query.filter_by(venue_id = venue.id)
+    num_upcoming_shows = (shows.filter(Show.start_time > datetime.datetime.now())).all()
     item_dict = {
       "id": item.id,
       "name": item.name,
-      "num upcoming shows": upcoming_shows
+      "num upcoming shows": num_upcoming_shows
       }
     data.append(item_dict)
 
@@ -119,10 +117,12 @@ def show_venue(venue_id):
   # shows the venue page with the given venue_id
 
   venue = Venue.query.get(venue_id)
+  shows = Show.query.filter_by(venue_id = venue.id).all()
   past_shows = []
   upcoming_shows = []
 
-  for show in venue.shows:
+  for show in shows:
+
     data = {
       "artist_id": show.artist_id,
       "artist_name": Artist.query.get(show.artist_id).name,
@@ -149,8 +149,8 @@ def show_venue(venue_id):
     "image_link": venue.image_link,
     "past_shows": past_shows,
     "upcoming_shows": upcoming_shows,
-    "past_shows_count": past_shows.count(),
-    "upcoming_shows_count": upcoming_shows.count(),
+    "past_shows_count": len(past_shows),
+    "upcoming_shows_count": len(upcoming_shows),
   }
   
   return render_template('pages/show_venue.html', venue=data)
