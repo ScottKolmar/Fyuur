@@ -5,7 +5,7 @@
 import json
 import dateutil.parser
 import babel
-from flask import Flask, render_template, request, Response, flash, redirect, url_for
+from flask import Flask, render_template, request, Response, flash, redirect, url_for, abort
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 import logging
@@ -127,6 +127,9 @@ def show_venue(venue_id):
     # shows the venue page with the given venue_id
 
     venue = Venue.query.get(venue_id)
+    if venue is None:
+      abort(404, description="Page not found.")
+
     shows = Show.query.filter_by(venue_id=venue.id).all()
     past_shows = []
     upcoming_shows = []
@@ -212,7 +215,7 @@ def create_venue_submission():
         flash(
             'An error occurred. Venue ' +
             request.form['name'] +
-            ' could not be listed.')
+            ' could not be listed.', 'error')
 
     finally:
 
@@ -247,7 +250,7 @@ def delete_venue(venue_id):
         flash(
             'An error occurred. Venue ' +
             venue.name +
-            'could not be deleted.')
+            'could not be deleted.', 'error')
 
     finally:
 
@@ -325,6 +328,8 @@ def show_artist(artist_id):
 
     # Get artist from database
     artist = Artist.query.get(artist_id)
+    if artist is None:
+      abort(404, description="Page not found.")
 
     # Loop through shows to get past and upcoming shows
     shows = Show.query.filter_by(artist_id=artist.id).all()
@@ -424,7 +429,7 @@ def edit_artist_submission(artist_id):
         flash(
             'An error occurred, ' +
             request.form['name'] +
-            'could not be updated.')
+            'could not be updated.', 'error')
 
     finally:
 
@@ -493,7 +498,7 @@ def edit_venue_submission(venue_id):
         flash(
             'An error occurred, ' +
             request.form['name'] +
-            'could not be updated.')
+            'could not be updated.', 'error')
 
     finally:
 
@@ -550,7 +555,7 @@ def create_artist_submission():
         flash(
             'An error occurred. Artist ' +
             request.form['name'] +
-            ' could not be listed.')
+            ' could not be listed.', 'error')
 
     finally:
 
@@ -616,7 +621,7 @@ def create_show_submission():
 
         # Rollback session on error and flash message
         db.session.rollback()
-        flash('An error occurred, show could not be listed.')
+        flash('An error occurred, show could not be listed.', 'error')
 
     finally:
 
