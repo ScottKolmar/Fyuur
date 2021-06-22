@@ -113,7 +113,7 @@ class VenueForm(Form):
         ]
     )
     facebook_link = StringField(
-        'facebook_link', validators=[URL(), message='Must be a valid URL.']
+        'facebook_link', validators=[URL(message='Must be a valid URL.')]
     )
     website_link = StringField(
         'website_link'
