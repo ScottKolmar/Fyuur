@@ -149,8 +149,8 @@ def show_venue(venue_id):
     "image_link": venue.image_link,
     "past_shows": past_shows,
     "upcoming_shows": upcoming_shows,
-    "past_shows_count": len(past_shows),
-    "upcoming_shows_count": len(upcoming_shows),
+    "past_shows_count": past_shows.count(),
+    "upcoming_shows_count": upcoming_shows.count(),
   }
   
   return render_template('pages/show_venue.html', venue=data)
@@ -280,7 +280,7 @@ def search_artists():
     data.append(item_dict)
 
   response={
-    "count": len(query_results),
+    "count": query_results.count(),
     "data": data
   }
 
